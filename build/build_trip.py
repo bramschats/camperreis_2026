@@ -167,6 +167,10 @@ NIGHTS = 26
 KLEUR={"overnachting":"#1d4ed8","bergpas":"#92400e","kabelbaan":"#db2777","uitzichtpunt":"#ca8a04","wandeling":"#15803d","fietsen":"#0d9488","markt":"#b45309","historie":"#7c3aed","terras":"#be123c","water":"#0284c7","stop":"#64748b"}
 LABEL={"overnachting":"Overnachting","bergpas":"Bergpas / weg","kabelbaan":"Kabelbaan","uitzichtpunt":"Uitzichtpunt","wandeling":"Wandelen","fietsen":"Fietsen","markt":"Markt","historie":"Historie / doen","terras":"Terras / wijn","water":"Water / zwemmen","stop":"Stop / transit"}
 
+import urllib.parse
+for _m in M:
+    _m['maps']='https://www.google.com/maps/search/?api=1&query='+urllib.parse.quote(_m['naam'])
+
 html = """<!DOCTYPE html>
 <html lang="nl"><head>
 <meta charset="utf-8"/>
@@ -262,6 +266,7 @@ MARKERS.forEach(s=>{
   let pop='<strong>'+s.naam+'</strong>'+(s.hond?' 🐾':'')+'<br><em>'+(s.dag||'')+'</em><br>'+(s.info||'');
   if(s.caveat) pop+='<br><b class="cv">⚠ '+s.caveat+'</b>';
   if(s.link) pop+='<br><a href="'+s.link+'" target="_blank" rel="noopener">Meer info / boeken</a>';
+  if(s.maps) pop+='<br><a href="'+s.maps+'" target="_blank" rel="noopener">📍 Google Maps</a>';
   m.bindPopup(pop); m.addTo(map);
   (layers[s.type]=layers[s.type]||[]).push(m); byId[s.id]=m;
 });
@@ -301,6 +306,7 @@ order.forEach(t=>{ if(!layers[t]) return;
     let inner='<div class="top"><span class="date">'+(sp.dag||'')+'</span>'+(sp.hond?'<span class="paw">🐾</span>':'')+'</div><h3>'+sp.naam+'</h3><p class="why">'+(sp.info||'')+'</p>';
     if(sp.caveat) inner+='<p class="cv">⚠ '+sp.caveat+'</p>';
     if(sp.link) inner+='<a href="'+sp.link+'" target="_blank" rel="noopener">Meer info / boeken</a>';
+    if(sp.maps) inner+=(sp.link?' \u00b7 ':'')+'<a href="'+sp.maps+'" target="_blank" rel="noopener">📍 Google Maps</a>';
     card.innerHTML=inner;
     card.onclick=(e)=>{ if(e.target.tagName==='A')return; const m=byId[sp.id]; if(m){map.setView(m.getLatLng(),10,{animate:true}); m.openPopup();} };
     poibox.appendChild(card);
